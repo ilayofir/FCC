@@ -1,9 +1,6 @@
 import React from 'react';
-import ReactDom from 'react-dom';
 import FCC from '../../FCC';
 import Button from '../Button';
-
-var BLUR_INTERVAL = 50;
 
 var ButtonMenu = class ButtonMenu extends Button {
     constructor(props) {
@@ -21,15 +18,22 @@ var ButtonMenu = class ButtonMenu extends Button {
     }
 
     componentDidMount(){
-        // ReactDom.getElementByRef('button').addEventListener('click', this.onClick)
-        // document.getElementsByClassName(this.id)[0].addEventListener('click', this.onClick)
         document.addEventListener('click', this.handleClickAway)
     }
 
     componentWillUnmount(){
-        // ReactDom.getElementByRef('button').removeEventListener('click', this.onClick)
-        // document.getElementsByClassName(this.id)[0].removeEventListener('click', this.onClick)
         document.removeEventListener('click', this.handleClickAway)
+    }
+
+    handleClickAway(e){
+
+        // TODO: use the react internal instance props insteas of class
+        if(!FCC.isEventOnChildOfClass(e, this.id)) this.setState({isSelected: false})
+    }
+
+    onPopOverClick(e){
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     onClick(e){
@@ -38,16 +42,12 @@ var ButtonMenu = class ButtonMenu extends Button {
         e.preventDefault();
     }
 
-    handleClickAway(e){
-        this.setState({isSelected: false})
-    }
-
-    renderPopOver(menuElement, {isOpen}){
-        if(!menuElement) return null;
+    renderPopOver(children, props){
+        if(!children) return null;
 
         return (
-            <FCC.Animators.PopOver isOpen={isOpen}>
-                {menuElement}
+            <FCC.Animators.PopOver onClick={this.onPopOverClick} {...props}>
+                {children}
             </FCC.Animators.PopOver>
         );
     }
@@ -56,8 +56,10 @@ var ButtonMenu = class ButtonMenu extends Button {
         var {
             value,
             isSelected = this.state.isSelected,
+            className,
             children,
             labelProps,
+            popOverProps,
             theme,
             ...props
         } = this.getFCCProps();
@@ -75,18 +77,19 @@ var ButtonMenu = class ButtonMenu extends Button {
             "PopOver": popOverTheme
         } = theme;
 
-        var childrenWithoutMenu = [].concat(children || []);
-        let menuElement = null;
-        let menuElementIndex = childrenWithoutMenu.findIndex(child => child.type === FCC.Menu);
-        if(menuElementIndex > -1){
-            menuElement = childrenWithoutMenu.splice(menuElementIndex, 1);
-        }
+        // var childrenWithoutMenu = [].concat(children || []);
+        // let menuElement = null;
+        // let menuElementIndex = childrenWithoutMenu.findIndex(child => child.type === FCC.Menu);
+        // if(menuElementIndex > -1){
+        //     menuElement = childrenWithoutMenu.splice(menuElementIndex, 1);
+        // }
+
+        className = this.id + ' ' + className;
 
         return (
-            <div { ...props } ref="button" onClick={this.onClick} style={style} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onFocus={this.onFocus} onBlur={this.onBlur}>
+            <div { ...props } className={className} onClick={this.onClick} style={style} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onFocus={this.onFocus} onBlur={this.onBlur}>
                 {this.renderLabel({ theme: labelTheme, value: value, ...labelProps })}
-                {this.renderPopOver(menuElement, {theme: popOverTheme, isOpen: isSelected})}
-                {this.renderChildren(childrenWithoutMenu)}
+                {this.renderPopOver(children, {theme: popOverTheme, isOpen: isSelected, ...popOverProps})}
             </div>
         )
     }

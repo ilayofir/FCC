@@ -28,20 +28,17 @@ var preview = class preview extends FCC {
         return (
             <div { ...props } style={style}>
                 <span>1 example</span>
-                <FCC.Menu>
-                    <FCC.ButtonMenu>
-                        Item 1
-                        <FCC.Menu>
-                            <FCC.Button>
-                                Item 4
-                            </FCC.Button>
-                            <FCC.Button>
-                                Item 5
-                            </FCC.Button>
-                            <FCC.Button>
-                                Item 6
-                            </FCC.Button>
-                        </FCC.Menu>
+                <FCC.ButtonMenu value={"Item 0"} popOverProps={{isFixed: true, anchor: 'bottom right'}}>
+                    <FCC.ButtonMenu value={"Item 1"}  popOverProps={{isFixed: true, anchor: 'top left'}}>
+                        <FCC.Button>
+                            Item 4
+                        </FCC.Button>
+                        <FCC.Button>
+                            Item 5
+                        </FCC.Button>
+                        <FCC.Button>
+                            Item 6
+                        </FCC.Button>
                     </FCC.ButtonMenu>
                     <FCC.Button>
                         Item 2
@@ -49,7 +46,7 @@ var preview = class preview extends FCC {
                     <FCC.Button>
                         Item 3
                     </FCC.Button>
-                </FCC.Menu>
+                </FCC.ButtonMenu>
             </div>
         )
     }

@@ -80,6 +80,15 @@ class FCC extends React.Component {
         return '';
     };
 
+    // find if an element is a child of a parent class
+    static isEventOnChildOfClass(event, className){
+        for (let i = 0; i < event.path.length; i++) {
+            const element = event.path[i];
+            if(element && element.className && element.className.startsWith(className)) return true;
+        }
+        return false;
+    }
+
     constructor(props) {
         super(props);
 
